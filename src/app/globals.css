@@ -74,9 +74,15 @@
   /* Single typeface across the whole project: Geist, used everywhere. */
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 
-  /* z-index scale (documented, single place) */
+  /* Motion easing vocabulary — strong, intentional curves (shared with GSAP).
+     Used for CSS hover/press; GSAP mirrors these via power3/power4 .out. */
+  --ease-out-quart: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* z-index scale (documented, single place) — extended for the landing nav. */
   --z-map: 0;
   --z-chrome: 10;
+  --z-nav: 20;
   --z-drawer: 30;
   --z-overlay: 40;
   --z-modal: 41;
@@ -188,6 +194,30 @@
 }
 [data-zd-drawer][data-state="open"] {
   animation: zd-drawer-in 260ms ease-out;
+}
+
+/* ── Landing signature: cartographic contour field ──────────────────────────
+   A slow ambient drift on the hero's isoline backdrop — evokes water-depth
+   contours (the subject's own world), GPU-only (transform), and silenced by the
+   reduced-motion block below. Decoration earns its place by being on-theme. */
+@keyframes zd-contour-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(-1.5%, -1%, 0) scale(1.04);
+  }
+}
+.zd-contour-drift {
+  animation: zd-contour-drift 26s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Scroll-reveal default: content is ALWAYS visible by default; GSAP sets the
+   hidden "from" state only when motion is permitted (see lib/motion.ts). This
+   guarantees content ships visible in headless renders and reduced-motion. */
+.zd-reveal {
+  opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
