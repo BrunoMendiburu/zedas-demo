@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# agent tooling — vendored design/a11y/motion/SEO skills (local only, not product code)
+/.claude/skills/

@@ -1,0 +1,27 @@
+# ZEDAS Project
+
+> Mapping the future of water-based production. ZEDAS (Water Availability and
+> Water-Resilient Economic Zones) is an international initiative of the Cámara
+> Argentina del Agua (CAA) that combines hydrology, economics, industrial policy,
+> and geospatial intelligence to identify territories where water can support
+> long-term economic development. Thesis: production follows water.
+
+## Pilot
+
+- 16 pilot countries across Latin America, Africa, and Asia (4 continents)
+- 7 core water & economic variables; 6 assessment dimensions; 1 global methodology
+- 100+ experts and institutions
+
+## Key pages
+
+- [Home](/): overview, the pilot, methodology, and the global map.
+- [Global Map](/map): interactive pilot map classifying the 16 countries by their
+  water profile (renewable resources, water stress, withdrawal, economic
+  productivity) with per-country detail and side-by-side comparison.
+
+## Notes
+
+- This is an illustrative pilot release. All figures are a pilot extract from
+  FAO AQUASTAT, World Bank, IMF, and the Water Footprint Network.
+- The pilot phase is supported by the Danida Fellows Networkers Grant 2026
+  (Danida Fellowship Centre, Ministry of Foreign Affairs of Denmark).

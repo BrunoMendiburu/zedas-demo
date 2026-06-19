@@ -2,10 +2,49 @@ import type { Metadata, Viewport } from "next";
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 
+const SITE_URL = "https://zedas.example.org";
+
 export const metadata: Metadata = {
-  title: "ZEDAS Project — Global water intelligence",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "ZEDAS Project — Mapping the Future of Water-Based Production",
+    template: "%s · ZEDAS Project",
+  },
   description:
-    "An illustrative pilot map classifying countries by their water profile — availability, stress, and use efficiency.",
+    "ZEDAS is building the world's first global platform to identify territories where water availability, quality, resilience, and governance can support long-term economic development. Production follows water.",
+  applicationName: "ZEDAS Project",
+  keywords: [
+    "water",
+    "water-based production",
+    "water intelligence",
+    "water resilience",
+    "economic zones",
+    "hydrology",
+    "industrial policy",
+    "Cámara Argentina del Agua",
+  ],
+  authors: [{ name: "Cámara Argentina del Agua (CAA)" }],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: "ZEDAS Project",
+    title: "ZEDAS Project — Mapping the Future of Water-Based Production",
+    description:
+      "As water becomes the strategic constraint on industry, the question flips: where should production go, according to water? Explore the global pilot map.",
+    url: SITE_URL,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ZEDAS Project — Mapping the Future of Water-Based Production",
+    description:
+      "The world's first global platform identifying where water can support long-term economic development. Production follows water.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
 };
 
 export const viewport: Viewport = {
