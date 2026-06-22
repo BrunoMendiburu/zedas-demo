@@ -57,7 +57,7 @@ export const viewport: Viewport = {
 };
 
 // Resolve the theme before first paint to avoid a flash / hydration mismatch.
-const themeScript = `(function(){try{var t=localStorage.getItem('zedas-theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;var e=document.documentElement;e.classList.toggle('dark',d);e.style.colorScheme=d?'dark':'light';}catch(e){}})();`;
+const themeScript = `(function(){try{var t=localStorage.getItem('zedas-theme');var d=t==='dark';var e=document.documentElement;e.classList.toggle('dark',d);e.style.colorScheme=d?'dark':'light';}catch(e){}})();`;
 
 export default function RootLayout({
   children,
