@@ -116,7 +116,9 @@ export default function Intelligence() {
         </Reveal>
 
         {/* ── Animated chat demo ────────────────────────────────────────────── */}
-        <Reveal delay={0.08}>
+        {/* min-w-0 is essential: it lets this grid cell shrink to the column
+            width so the chat's nowrap typed text can never widen the layout. */}
+        <Reveal delay={0.08} className="min-w-0">
           <ChatDemo />
         </Reveal>
       </Container>
@@ -206,7 +208,7 @@ function ChatDemo() {
   return (
     <figure
       ref={ref}
-      className="relative overflow-hidden rounded-2xl border border-deep-border bg-deep-2/80 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.6)] backdrop-blur-sm"
+      className="relative w-full min-w-0 max-w-full overflow-hidden rounded-2xl border border-deep-border bg-deep-2/80 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.6)] backdrop-blur-sm"
     >
       {/* Accessible static summary; the animated transcript below is decorative. */}
       <p className="sr-only">
@@ -219,7 +221,7 @@ function ChatDemo() {
 
       <div aria-hidden>
         {/* Window header */}
-        <div className="flex items-center justify-between gap-3 border-b border-deep-border px-5 py-3.5">
+        <div className="flex items-center justify-between gap-3 border-b border-deep-border px-4 py-3.5 sm:px-5">
           <div className="flex items-center gap-2">
             <span className="inline-flex size-6 items-center justify-center rounded-md bg-deep-accent/15 text-deep-accent ring-1 ring-inset ring-deep-accent/25">
               <Sparkles className="size-3.5" />
@@ -233,11 +235,13 @@ function ChatDemo() {
           </span>
         </div>
 
-        {/* Transcript */}
-        <div className="flex h-[22rem] flex-col justify-end gap-3 overflow-hidden px-4 py-4 sm:h-[23rem] sm:px-5">
+        {/* Transcript — the height must clear the *tallest* frame of the loop
+            (user question + result card + answer). Mobile wraps more text, so it
+            needs more room; on wider columns the same content is shorter. */}
+        <div className="flex h-[32rem] flex-col justify-start gap-2.5 overflow-hidden px-4 py-4 sm:h-[23rem] sm:gap-3 sm:px-5">
           {/* User message */}
           {frame.sent && (
-            <div className="zd-rise flex justify-end">
+            <div className="zd-fade flex justify-end">
               <p className="max-w-[88%] rounded-2xl rounded-br-sm bg-deep-accent/15 px-3.5 py-2.5 text-[13px] leading-relaxed text-deep-foreground ring-1 ring-inset ring-deep-accent/20">
                 {PROMPT}
               </p>
@@ -246,7 +250,7 @@ function ChatDemo() {
 
           {/* Agent: typing indicator */}
           {frame.thinking && (
-            <div className="zd-rise flex items-center gap-1.5 pl-1">
+            <div className="zd-fade flex items-center gap-1.5 pl-1">
               <Dot delay="0ms" />
               <Dot delay="150ms" />
               <Dot delay="300ms" />
@@ -255,7 +259,7 @@ function ChatDemo() {
 
           {/* Agent: action card — the query it runs over the pilot dataset */}
           {frame.action !== "idle" && (
-            <div className="zd-rise rounded-xl border border-deep-border bg-deep/50 p-3.5">
+            <div className="zd-fade rounded-xl border border-deep-border bg-deep/50 p-3 sm:p-3.5">
               <div className="flex items-center gap-2">
                 {frame.action === "running" ? (
                   <>
@@ -277,12 +281,12 @@ function ChatDemo() {
               </div>
 
               {frame.action === "done" && (
-                <div className="zd-rise mt-3">
+                <div className="zd-fade mt-3">
                   <ul className="space-y-1.5">
                     {MATCHES.map((m) => (
                       <li
                         key={m.isoN}
-                        className="flex items-center gap-2.5 rounded-lg border border-deep-border bg-deep/40 px-2.5 py-2"
+                        className="flex items-center gap-2.5 rounded-lg border border-deep-border bg-deep/40 px-2.5 py-1.5 sm:py-2"
                       >
                         <Flag isoN={m.isoN} className="h-3 w-auto rounded-[2px]" />
                         <span className="min-w-0 flex-1 truncate text-[12.5px] font-medium text-deep-foreground">
@@ -314,7 +318,7 @@ function ChatDemo() {
 
           {/* Agent: natural-language answer + a real panel action it offers */}
           {frame.answered && (
-            <div className="zd-rise">
+            <div className="zd-fade">
               <p className="max-w-[94%] rounded-2xl rounded-bl-sm bg-deep/60 px-3.5 py-2.5 text-[13px] leading-relaxed text-deep-foreground/90 ring-1 ring-inset ring-deep-border">
                 Brazil leads by a wide margin — 8,647&nbsp;km³/yr at just 1.5%
                 stress. Colombia and Vietnam follow, both still in the No-stress
@@ -331,16 +335,26 @@ function ChatDemo() {
         </div>
 
         {/* Composer */}
-        <div className="border-t border-deep-border p-3 sm:p-3.5">
+        <div className="border-t border-deep-border px-4 py-3 sm:px-5 sm:py-3.5">
           <div className="flex items-center gap-2 rounded-xl border border-deep-border bg-deep/50 px-3.5 py-2.5">
-            <span className="min-w-0 flex-1 truncate text-[13px] text-deep-foreground">
+            {/* Fixed-width, clipped text area. While typing, the inner line is
+                right-anchored (justify-end) so the tail + caret stay visible and
+                the overflow is clipped on the left — exactly like a real input,
+                and the box never grows in x. */}
+            <span
+              className={`flex min-w-0 flex-1 items-center overflow-hidden whitespace-nowrap text-[13px] text-deep-foreground ${
+                composing ? "justify-end" : "justify-start"
+              }`}
+            >
               {composing ? (
-                <>
+                <span className="inline-flex shrink-0 items-center">
                   {frame.typed}
                   <span className="zd-caret ml-px inline-block h-3.5 w-px translate-y-0.5 bg-deep-accent align-middle" />
-                </>
+                </span>
               ) : (
-                <span className="text-deep-muted">Ask about the pilot countries and indicators…</span>
+                <span className="truncate text-deep-muted">
+                  Ask about the pilot countries and indicators…
+                </span>
               )}
             </span>
             <span
