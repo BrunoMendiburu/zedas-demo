@@ -336,15 +336,14 @@ function ChatDemo() {
         {/* Composer */}
         <div className="border-t border-deep-border px-4 py-3 sm:px-5 sm:py-3.5">
           <div className="flex items-center gap-2 rounded-xl border border-deep-border bg-deep/50 px-3.5 py-2.5">
-            {/* Fixed-width, clipped text area. The inner line is left-anchored
-                (justify-start) so text reads left-to-right and grows rightward as
-                it's typed — exactly like a real input — while overflow is clipped
-                on the right and the box never grows in x. */}
-            <span
-              className="flex min-w-0 flex-1 items-center justify-start overflow-hidden whitespace-nowrap text-[13px] text-deep-foreground"
-            >
+            {/* Fixed-width, single-line text area. Text reads left-to-right and
+                grows rightward as it's typed — exactly like a real input. When it
+                outgrows the box, `truncate` adds an ellipsis (…) on the right
+                instead of a hard clip. Height stays fixed at one line, so this
+                never changes the size or position of any other element. */}
+            <span className="flex min-w-0 flex-1 items-center overflow-hidden whitespace-nowrap text-[13px] text-deep-foreground">
               {composing ? (
-                <span className="inline-flex shrink-0 items-center">
+                <span className="min-w-0 flex-1 truncate">
                   {frame.typed}
                   <span className="zd-caret ml-px inline-block h-3.5 w-px translate-y-0.5 bg-deep-accent align-middle" />
                 </span>
