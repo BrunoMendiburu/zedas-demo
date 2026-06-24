@@ -142,7 +142,7 @@ function ChatDemo() {
 
     let cancelled = false;
     let running = false;
-    let visible = true;
+    let visible = false;
     const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
     const set = (patch: Partial<Frame>) => setFrame((f) => ({ ...f, ...patch }));
 
@@ -184,14 +184,13 @@ function ChatDemo() {
       running = false;
     }
 
-    // Start immediately; the observer only pauses/resumes the loop as the demo
-    // enters and leaves the viewport (so it doesn't run unseen, but never
-    // depends on the observer firing in order to start).
-    play();
-
+    // Don't start on render. The observer kicks off the loop the first time the
+    // demo scrolls into view, and afterwards only pauses/resumes it as the demo
+    // leaves and re-enters the viewport. Until then the frame holds at FINAL.
     const io = new IntersectionObserver(
       ([entry]) => {
         visible = entry.isIntersecting;
+        if (visible) play();
       },
       { threshold: 0.25 },
     );
@@ -337,14 +336,12 @@ function ChatDemo() {
         {/* Composer */}
         <div className="border-t border-deep-border px-4 py-3 sm:px-5 sm:py-3.5">
           <div className="flex items-center gap-2 rounded-xl border border-deep-border bg-deep/50 px-3.5 py-2.5">
-            {/* Fixed-width, clipped text area. While typing, the inner line is
-                right-anchored (justify-end) so the tail + caret stay visible and
-                the overflow is clipped on the left — exactly like a real input,
-                and the box never grows in x. */}
+            {/* Fixed-width, clipped text area. The inner line is left-anchored
+                (justify-start) so text reads left-to-right and grows rightward as
+                it's typed — exactly like a real input — while overflow is clipped
+                on the right and the box never grows in x. */}
             <span
-              className={`flex min-w-0 flex-1 items-center overflow-hidden whitespace-nowrap text-[13px] text-deep-foreground ${
-                composing ? "justify-end" : "justify-start"
-              }`}
+              className="flex min-w-0 flex-1 items-center justify-start overflow-hidden whitespace-nowrap text-[13px] text-deep-foreground"
             >
               {composing ? (
                 <span className="inline-flex shrink-0 items-center">
