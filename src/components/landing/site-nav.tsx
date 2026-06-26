@@ -8,6 +8,7 @@ import { ArrowRight, Menu, X } from "lucide-react";
 const NAV_LINKS = [
   { href: "#about", label: "About" },
   { href: "#pilot", label: "The Pilot" },
+  { href: "#focal-points", label: "Focal Points" },
   { href: "#why", label: "Why ZEDAS" },
   { href: "#methodology", label: "Methodology" },
   { href: "#intelligence", label: "Intelligence" },
@@ -19,7 +20,6 @@ const NAV_LINKS = [
 const FUTURE_PAGES = [
   "The Water Century",
   "Pilot Countries",
-  "Focal Points",
   "Partners",
   "Knowledge Hub",
   "Contact",
@@ -54,7 +54,7 @@ export default function SiteNav() {
     >
       <nav
         aria-label="Primary"
-        className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 md:grid md:grid-cols-[1fr_auto_1fr] lg:px-8"
+        className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:px-8"
       >
         <Link
           href="/"
@@ -63,7 +63,7 @@ export default function SiteNav() {
           ZEDAS<span className="font-medium text-muted"> Project</span>
         </Link>
 
-        <div className="hidden items-center gap-1 justify-self-center md:flex">
+        <div className="hidden items-center gap-1 justify-self-center lg:flex">
           {NAV_LINKS.map((l) => (
             <a
               key={l.href}
@@ -91,7 +91,7 @@ export default function SiteNav() {
             onClick={() => setMenuOpen((o) => !o)}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
-            className="inline-flex size-9 items-center justify-center rounded-lg border border-border bg-surface/90 text-foreground shadow-sm backdrop-blur-md transition-colors hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring md:hidden"
+            className="inline-flex size-9 items-center justify-center rounded-lg border border-border bg-surface/90 text-foreground shadow-sm backdrop-blur-md transition-colors hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring lg:hidden"
           >
             {menuOpen ? <X className="size-4" aria-hidden /> : <Menu className="size-4" aria-hidden />}
           </button>
@@ -100,14 +100,19 @@ export default function SiteNav() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="border-t border-border bg-background/95 backdrop-blur-md md:hidden">
+        <div className="border-t border-border bg-background/95 backdrop-blur-md lg:hidden">
           <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
             <ul className="flex flex-col">
               {NAV_LINKS.map((l) => (
                 <li key={l.href}>
                   <a
                     href={l.href}
-                    onClick={() => setMenuOpen(false)}
+                    onClick={() => {
+                      // Unlock body scroll synchronously so the browser's native
+                      // anchor scroll isn't swallowed by the open-menu lock.
+                      document.body.style.overflow = "";
+                      setMenuOpen(false);
+                    }}
                     className="block rounded-md px-2 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                   >
                     {l.label}

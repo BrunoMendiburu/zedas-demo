@@ -8,6 +8,7 @@ import Manifesto from "@/components/landing/manifesto";
 import Methodology from "@/components/landing/methodology";
 import GlobalMap from "@/components/landing/global-map";
 import PartnersMarquee from "@/components/landing/partners-marquee";
+import FocalPoints from "@/components/landing/focal-points";
 import Intelligence from "@/components/landing/intelligence";
 import JoinBand from "@/components/landing/join-band";
 import Acknowledgement from "@/components/landing/acknowledgement";
@@ -56,6 +57,7 @@ export default function Home() {
         <About />
         <Pilot />
         <PartnersMarquee />
+        <FocalPoints />
         <ByTheNumbers />
         <WhyZedas />
         <Manifesto />
