@@ -13,7 +13,13 @@ import { Container } from "./primitives";
 // statically rendered, so production reflects new files on the next build;
 // `next dev` shows them on refresh.
 
-type Partner = { src: string; alt: string; width: number; height: number };
+type Partner = {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  cap: string;
+};
 
 const CARRUSEL_DIR = join(process.cwd(), "public", "carrusel");
 
@@ -21,6 +27,19 @@ const CARRUSEL_DIR = join(process.cwd(), "public", "carrusel");
 // Anything without an entry falls back to a humanized version of its filename.
 const ALT_OVERRIDES: Record<string, string> = {
   caa: "Cámara Argentina del Agua",
+};
+
+// Per-logo optical-weight correction. The source PNGs are trimmed to their
+// artwork (see scripts/trim), so a single cap already gives near-equal height;
+// these caps are the finer "equal visual weight" pass — the heaviest wordmark is
+// held back a touch, lighter lockups fill a touch more. Each caps the mark's
+// height to a % of the cell. Keyed by lowercase base filename; anything else uses
+// DEFAULT_CAP. Tuned by eye from a screenshot.
+const DEFAULT_CAP = "max-h-[80%]";
+const CAP_OVERRIDES: Record<string, string> = {
+  latamwater: "max-h-[74%]", // bold black wordmark — heaviest, so hold it back
+  caa: "max-h-[82%]", // blue wordmark + fine subtitle — mid weight
+  undelta: "max-h-[84%]", // lighter lockup + subtitle — let it fill a touch more
 };
 
 // A PNG's width/height live in its IHDR chunk (big-endian) right after the 8-byte
@@ -58,15 +77,24 @@ function readPartners(): Partner[] {
         alt: ALT_OVERRIDES[base] ?? humanize(file),
         width: dim.width,
         height: dim.height,
+        cap: CAP_OVERRIDES[base] ?? DEFAULT_CAP,
       };
     })
     .filter((p): p is Partner => p !== null);
 }
 
-// Default: a soft, uniform 60% so the strip reads as a quiet wall, not a row of
-// loud badges. Each mark lifts to full on hover (the marquee also pauses then).
+// Uniform slot for every logo. The cell (not the image) defines the footprint;
+// the image is centred inside it and scaled by object-contain up to its per-logo
+// cap — so sizing is consistent and nothing is ever stretched.
+const CELL_CLASS =
+  "flex h-12 w-40 shrink-0 items-center justify-center md:h-14 md:w-48";
+
+// Soft, uniform 60% so the strip reads as a quiet wall, not a row of loud badges.
+// Each mark lifts to full on hover (the marquee also pauses then). Only ever an
+// auto dimension plus max caps — never a fixed width AND height — so object-
+// contain has nothing to distort.
 const LOGO_CLASS =
-  "h-8 w-auto object-contain opacity-60 transition-opacity duration-300 hover:opacity-100 md:h-9";
+  "h-auto w-auto max-w-full object-contain opacity-60 transition-opacity duration-300 hover:opacity-100";
 
 function Logo({
   partner,
@@ -81,8 +109,8 @@ function Logo({
       alt={decorative ? "" : partner.alt}
       width={partner.width}
       height={partner.height}
-      sizes="160px"
-      className={LOGO_CLASS}
+      sizes="192px"
+      className={`${LOGO_CLASS} ${partner.cap}`}
     />
   );
 }
@@ -101,10 +129,10 @@ function MarqueeGroup({
   return (
     <ul
       aria-hidden={hidden || undefined}
-      className="flex shrink-0 items-center gap-12 pr-12 md:gap-20 md:pr-20"
+      className="flex shrink-0 items-center gap-12 pr-12 md:gap-16 md:pr-16"
     >
       {group.map((partner, i) => (
-        <li key={i} className="flex shrink-0 items-center">
+        <li key={i} className={CELL_CLASS}>
           {/* Announce each partner once: real alt on the first pass, decorative
               on the repeats; the entire duplicate group is aria-hidden. */}
           <Logo partner={partner} decorative={hidden || i >= baseCount} />
@@ -150,9 +178,9 @@ export default function PartnersMarquee() {
 
       {/* Reduced-motion fallback: one static, centered row of the marks. */}
       <Container className="mt-8 hidden motion-reduce:block md:mt-10">
-        <ul className="flex flex-wrap items-center justify-center gap-12 md:gap-20">
+        <ul className="flex flex-wrap items-center justify-center gap-12 md:gap-16">
           {partners.map((partner) => (
-            <li key={partner.src} className="flex items-center">
+            <li key={partner.src} className={CELL_CLASS}>
               <Logo partner={partner} />
             </li>
           ))}
